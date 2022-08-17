@@ -1,0 +1,56 @@
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+buildscript {
+    ext.kotlin_version = '1.6.0'
+    ext.postBuildExtras = {
+        if (project.extensions.findByName('googleServices') == null) {
+            // apply plugin: 'com.google.gms.google-services'
+            // class must be used instead of id(string) to be able to apply plugin from non-root gradle file
+            apply plugin: com.google.gms.googleservices.GoogleServicesPlugin
+            googleServices { disableVersionCheck = false }
+        }
+    }
+    repositories {
+        mavenCentral()
+        google()
+        maven { url 'http://maven.aliyun.com/nexus/content/groups/public/' }
+        maven { url 'http://maven.aliyun.com/nexus/content/repositories/central' }
+        jcenter()
+
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:4.0.2'
+        classpath 'com.github.dcendents:android-maven-gradle-plugin:1.5'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath "org.jetbrains.kotlin:kotlin-noarg:$kotlin_version"
+        classpath "org.jetbrains.kotlin:kotlin-allopen:$kotlin_version"
+        classpath 'com.google.gms:google-services:4.3.3'
+        // NOTE: Do not place your application dependencies here; they belong
+        // in the individual module build.gradle files
+    }
+}
+
+allprojects {
+    repositories {
+        mavenCentral()
+        google()
+        maven {
+            url "https://repo.spring.io/release"
+        }
+        maven { url 'https://jitpack.io' }
+        maven { url 'http://maven.aliyun.com/nexus/content/groups/public/' }
+        maven { url 'http://maven.aliyun.com/nexus/content/repositories/central' }
+        maven { url "https://maven.fabric.io/public" }
+        maven { url "http://jcenter.bintray.com" }
+        jcenter()
+    }
+}
+
+ext {
+    mainSingleCfg = [
+            // DES key
+            desKey: "!(OA^8B#6",
+    ]
+}
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}

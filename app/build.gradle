@@ -1,0 +1,166 @@
+import javax.crypto.Cipher
+import javax.crypto.SecretKeyFactory
+import javax.crypto.spec.DESKeySpec
+import java.nio.charset.StandardCharsets
+import java.security.SecureRandom
+
+plugins {
+    id 'com.android.application'
+    id 'kotlin-android'
+    id 'kotlin-android-extensions'
+    id 'kotlin-kapt'
+}
+
+def quote(String s) {
+    return "\"" + s + "\""
+}
+
+apply from: "./gradleTools.gradle"
+android {
+    compileSdkVersion 31
+    buildToolsVersion "30.0.3"
+
+    defaultConfig {
+        applicationId "com.mt.bottomnavigate"
+        minSdkVersion 23
+        targetSdkVersion 31
+        versionCode 1
+        versionName "1.0"
+        resConfigs "zh-rCN"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        debug{
+            buildConfigField "String", "SECURITY_KEY", encrypt("bdc813355a2bf0706f9d4ec165c2ae11")
+            buildConfigField "String", "SECURITY_IV", encrypt("VNnJ1YQnpbyuKBIb")
+        }
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    buildFeatures {
+        viewBinding true
+    }
+
+}
+
+
+allprojects {
+    tasks.withType(Javadoc) {//兼容中文字符
+        options {
+            encoding "UTF-8"
+            charSet 'UTF-8'
+            links "http://docs.oracle.com/javase/7/docs/api"
+        }
+    }
+}
+
+
+allprojects {
+    tasks.withType(Javadoc) {//兼容中文字符
+        options {
+            encoding "UTF-8"
+            charSet 'UTF-8'
+            links "http://docs.oracle.com/javase/7/docs/api"
+        }
+    }
+}
+dependencies {
+    implementation 'androidx.annotation:annotation:1.3.0'
+    implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    def lifecycle_version = "2.2.0"
+    implementation 'androidx.appcompat:appcompat:1.4.2'
+    implementation 'com.google.android.material:material:1.6.1'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    implementation 'androidx.vectordrawable:vectordrawable:1.1.0'
+    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.5.1'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1'
+    implementation 'androidx.navigation:navigation-fragment:2.5.1'
+    implementation 'androidx.navigation:navigation-ui:2.5.1'
+    testImplementation 'junit:junit:4.+'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+
+
+// Kotlin fragment
+    implementation 'androidx.fragment:fragment-ktx:1.4.1'
+    // ViewModel
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
+    // LiveData
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version"
+    // Lifecycles only (without ViewModel or LiveData)
+    implementation "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_version"
+
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    implementation "androidx.core:core-ktx:1.5.0"
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.0'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.0'
+
+    implementation 'com.gyf.immersionbar:immersionbar:3.0.0-beta07'
+
+    implementation 'com.tencent:mmkv-static:1.2.7'
+}
+
+// 统一获取内容格式
+static String appendContent(String content) {
+    return quote(content)
+}
+
+String encrypt(String content) {
+    return quote(des(content, rootProject.ext.mainSingleCfg.desKey, Cipher.ENCRYPT_MODE))
+}
+// 加解密
+static String des(String content, String password, int type) {
+    try {
+        SecureRandom random = new SecureRandom()
+        DESKeySpec desKey = new DESKeySpec(password.getBytes())
+        SecretKeyFactory keyFactory = SecretKeyFactory.getInstance("DES")
+        Cipher cipher = Cipher.getInstance("DES")
+        cipher.init(type, keyFactory.generateSecret(desKey), random)
+
+        if (type == Cipher.ENCRYPT_MODE) {
+            byte[] byteContent = content.getBytes(StandardCharsets.UTF_8)
+            return parseByte2HexStr(cipher.doFinal(byteContent))
+        } else {
+            byte[] byteContent = parseHexStr2Byte(content)
+            assert byteContent != null
+            return new String(cipher.doFinal(byteContent))
+        }
+    } catch (Exception e) {
+        throw e
+    }
+}
+
+// 将二进制转换成16进制
+static String parseByte2HexStr(byte[] buf) {
+    StringBuffer sb = new StringBuffer()
+    for (int i = 0; i < buf.length; i++) {
+        String hex = Integer.toHexString(buf[i] & 0xFF)
+        if (hex.length() == 1) {
+            hex = '0' + hex
+        }
+        sb.append(hex.toUpperCase())
+    }
+    return sb.toString()
+}
+
+// 将16进制转换为二进制
+static byte[] parseHexStr2Byte(String hexStr) {
+    if (hexStr.length() < 1)
+        return null;
+    byte[] result = new byte[hexStr.length() / 2];
+    for (int i = 0; i < hexStr.length() / 2; i++) {
+        int high = Integer.parseInt(hexStr.substring(i * 2, i * 2 + 1), 16);
+        int low = Integer.parseInt(hexStr.substring(i * 2 + 1, i * 2 + 2),
+                16);
+        result[i] = (byte) (high * 16 + low);
+    }
+    return result;
+}
