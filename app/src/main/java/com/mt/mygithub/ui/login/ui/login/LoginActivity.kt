@@ -16,6 +16,7 @@ import android.widget.Toast
 import androidx.lifecycle.ViewModelProviders
 import com.mt.mygithub.R
 import com.mt.mygithub.databinding.ActivityLoginBinding
+import com.mt.mygithub.ui.BaseActivity
 import com.mt.mygithub.ui.main.MainActivity
 import com.mt.mygithub.ui.wigit.dialog.ProgressDialog
 import com.tencent.mmkv.MMKV
@@ -24,7 +25,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 
-class LoginActivity : AppCompatActivity() {
+class LoginActivity : BaseActivity() {
 
     private lateinit var loginViewModel: LoginViewModel
     private lateinit var binding: ActivityLoginBinding

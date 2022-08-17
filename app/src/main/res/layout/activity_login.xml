@@ -12,13 +12,16 @@
     tools:context=".ui.login.ui.login.LoginActivity">
 
     <EditText
+
         android:id="@+id/username"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="50dp"
         android:layout_marginStart="24dp"
         android:layout_marginTop="96dp"
         android:layout_marginEnd="24dp"
         android:hint="@string/prompt_email"
+        android:gravity="center_vertical"
+        android:background="@drawable/shape_btn_bg"
         android:inputType="textEmailAddress"
         android:selectAllOnFocus="true"
         app:layout_constraintEnd_toEndOf="parent"
@@ -26,9 +29,11 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
+        android:gravity="center_vertical"
+        android:background="@drawable/shape_btn_bg"
         android:id="@+id/password"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="50dp"
         android:layout_marginStart="24dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="24dp"
@@ -43,11 +48,13 @@
 
     <Button
         android:id="@+id/login"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_width="180dp"
+        android:layout_height="50dp"
         android:layout_gravity="start"
         android:layout_marginStart="48dp"
         android:layout_marginTop="16dp"
+        android:background="@drawable/shape_btn_bg"
         android:layout_marginEnd="48dp"
         android:layout_marginBottom="64dp"
         android:enabled="false"
