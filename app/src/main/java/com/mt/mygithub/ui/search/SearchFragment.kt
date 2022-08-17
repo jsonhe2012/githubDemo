@@ -81,6 +81,14 @@ class SearchFragment : DialogFragment(), View.OnClickListener, OnEditorActionLis
         viewBinding?.run {
             input.setOnEditorActionListener(this@SearchFragment)
             searchbtn.setOnClickListener(this@SearchFragment)
+
+            input.setOnClickListener(View.OnClickListener {
+                setInputShow(
+                    true,
+                    context!!,
+                    input
+                )
+            })
             input.addTextChangedListener(object : TextWatcher {
                 override fun beforeTextChanged(
                     charSequence: CharSequence,

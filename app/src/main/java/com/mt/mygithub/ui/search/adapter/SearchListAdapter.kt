@@ -1,18 +1,13 @@
 package com.mt.mygithub.ui.search.adapter
 
-import android.annotation.SuppressLint
 import android.content.Context
-import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
-import android.widget.LinearLayout
-import android.widget.RelativeLayout
 import android.widget.TextView
 import com.mt.mygithub.R
 import com.mt.mygithub.data.SearchBean
-import java.lang.String
 
 /**
  * @description:
@@ -53,13 +48,17 @@ class SearchListAdapter : BaseAdapter {
         var seatChBean = list?.get(position)
         convertView?.let {
             viewHolder = convertView?.getTag() as ViewHolder?
+            viewHolder ?: let {
+                viewHolder = ViewHolder()
+            }
         } ?: let {
-            convertView = null
-            LayoutInflater.from(context).inflate(R.layout.serach_list_item, null)
-                .also { convertView = it };
+            convertView =
+                LayoutInflater.from(parent?.context).inflate(R.layout.serach_list_item, null)
             viewHolder = ViewHolder()
-            viewHolder?.title?.text = seatChBean?.title ?: ""
+            convertView?.setTag(viewHolder)
         }
+
+        viewHolder?.title?.text = seatChBean?.title ?: ""
 
         return convertView
     }

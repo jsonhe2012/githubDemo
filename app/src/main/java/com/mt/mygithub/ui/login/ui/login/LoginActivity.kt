@@ -1,7 +1,9 @@
 package com.mt.mygithub.ui.login.ui.login
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
+import android.os.Build
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
@@ -11,8 +13,10 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModelProviders
 import com.mt.mygithub.R
 import com.mt.mygithub.databinding.ActivityLoginBinding
@@ -40,7 +44,7 @@ class LoginActivity : BaseActivity() {
         val password = binding.password
         val login = binding.login
         val loading = binding.loading
-
+        username.showSoftInputOnFocus = true
         loginViewModel = LoginViewModelFactory.create(LoginViewModel::class.java)
 
         loginViewModel.loginFormState.observe(this@LoginActivity, Observer {
@@ -69,8 +73,24 @@ class LoginActivity : BaseActivity() {
             setResult(Activity.RESULT_OK)
 
         })
+        username.focusable = View.FOCUSABLE
+        username.setOnClickListener(View.OnClickListener {
+            username.isSelected = true
+            setInputShow(
+                true,
+                this,
+                username
+            )
+        })
 
-        username.afterTextChanged {
+        password.setOnClickListener(View.OnClickListener {
+            setInputShow(
+                true,
+                this,
+                password
+            )
+        })
+        password.afterTextChanged {
             loginViewModel.loginDataChanged(
                 username.text.toString(),
                 password.text.toString()
@@ -112,6 +132,22 @@ class LoginActivity : BaseActivity() {
             startActivity(intent)
             loadingDialog.dismiss()
             finish()
+        }
+    }/**
+     * 设置输入法展现和关闭
+     *
+     * @param bShow
+     * @param context
+     * @param view
+     */
+    fun setInputShow(bShow: Boolean, context: Context, view: View) {
+        if (bShow) {
+            view.requestFocus()
+            val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm?.showSoftInput(view, 0)
+        } else {
+            val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm?.hideSoftInputFromWindow(view.windowToken, 0)
         }
     }
 
